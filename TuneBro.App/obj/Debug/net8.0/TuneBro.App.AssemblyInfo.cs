@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TuneBro.App")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+53e995f35709b305b46241628a616f8f7ce2990b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c61a490eb94c3e59488c3e2b7128e3907f61d878")]
 [assembly: System.Reflection.AssemblyProductAttribute("TuneBro.App")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TuneBro.App")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
