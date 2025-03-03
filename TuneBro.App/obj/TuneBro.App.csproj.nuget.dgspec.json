@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "/home/joseph/Clone/tunebro/TuneBro.App/TuneBro.App.csproj": {}
+    "C:\\Users\\Joseph\\source\\repos\\tunebro\\TuneBro.App\\TuneBro.App.csproj": {}
   },
   "projects": {
-    "/home/joseph/Clone/tunebro/TuneBro.App/TuneBro.App.csproj": {
+    "C:\\Users\\Joseph\\source\\repos\\tunebro\\TuneBro.App\\TuneBro.App.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/joseph/Clone/tunebro/TuneBro.App/TuneBro.App.csproj",
+        "projectUniqueName": "C:\\Users\\Joseph\\source\\repos\\tunebro\\TuneBro.App\\TuneBro.App.csproj",
         "projectName": "TuneBro.App",
-        "projectPath": "/home/joseph/Clone/tunebro/TuneBro.App/TuneBro.App.csproj",
-        "packagesPath": "/home/joseph/.nuget/packages/",
-        "outputPath": "/home/joseph/Clone/tunebro/TuneBro.App/obj/",
+        "projectPath": "C:\\Users\\Joseph\\source\\repos\\tunebro\\TuneBro.App\\TuneBro.App.csproj",
+        "packagesPath": "C:\\Users\\Joseph\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Joseph\\source\\repos\\tunebro\\TuneBro.App\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/joseph/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\Joseph\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -32,6 +34,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -58,18 +65,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.5, 8.0.5]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.105/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.404/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
