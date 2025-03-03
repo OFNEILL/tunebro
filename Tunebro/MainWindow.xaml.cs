@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TuneBro.Business;
 
 namespace Tunebro
 {
@@ -31,6 +32,10 @@ namespace Tunebro
                 string filePath = openFileDialog.FileName;
                 // Handle the uploaded file (e.g., play it, save it, etc.)
                 MessageBox.Show("File uploaded: " + filePath);
+
+                Business business = new Business();
+
+                business.Init(filePath);
             }
         }
     }
