@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tunebro", "Tunebro\Tunebro.csproj", "{0B0F9E4E-7AB7-461F-8E5D-E51D32EA6604}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TuneBro.Business", "TuneBro.Business\TuneBro.Business.csproj", "{B6D3C388-1A51-475B-8321-8F4CA61D1E0F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{0B0F9E4E-7AB7-461F-8E5D-E51D32EA6604}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B0F9E4E-7AB7-461F-8E5D-E51D32EA6604}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B0F9E4E-7AB7-461F-8E5D-E51D32EA6604}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6D3C388-1A51-475B-8321-8F4CA61D1E0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6D3C388-1A51-475B-8321-8F4CA61D1E0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6D3C388-1A51-475B-8321-8F4CA61D1E0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6D3C388-1A51-475B-8321-8F4CA61D1E0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
