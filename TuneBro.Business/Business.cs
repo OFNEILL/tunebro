@@ -4,7 +4,7 @@ namespace TuneBro.Business
 {
     public class Business
     {
-        public void Init(string path)
+        public string Init(string path)
         {
             //copy file to working directory
             string workingPath = HandleFileCopy(path);
@@ -14,6 +14,8 @@ namespace TuneBro.Business
             float maxVolume = ExtractMaxVolume(reader);
 
             Console.WriteLine(maxVolume.ToString());
+
+            return workingPath;
         }
 
         private string HandleFileCopy(string path)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NAudio.Wave;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using TuneBro.Business;
 
 namespace Tunebro
 {
@@ -20,9 +22,12 @@ namespace Tunebro
     /// </summary>
     public partial class TuneLight : Window
     {
+        public static string workingPath = "";
+
         private static Window window;
-        public TuneLight()
+        public TuneLight(string path)
         {
+            workingPath = path;
             InitializeComponent();
         }
 
@@ -53,6 +58,55 @@ namespace Tunebro
             // Begin the animation of the ColorAnimation within the storyboard
             //colorFadeStoryboard.Begin(window.Resources);
             //this.Background = new SolidColorBrush(toColor);
+        }
+
+        private void RunAudio(object sender, RoutedEventArgs e)
+        {
+            var window = new Window();
+            var canvas = new Canvas();
+            using (var reader = new AudioFileReader(workingPath))
+            {
+                float f = 0.0f;
+                float max = 0.0f;
+                int mid = 100;
+                int yScale = 100;
+                int xPos = 0;
+                int read = 0;
+
+                long samples = reader.Length / (reader.WaveFormat.Channels * reader.WaveFormat.BitsPerSample / 8);
+                int batch = (int)Math.Max(40, samples / 4000); // waveform <= 4000 pixels in width
+                float[] buffer = new float[batch];
+
+                while ((read = reader.Read(buffer, 0, batch)) == batch)
+                {
+                    for (int n = 0; n < read; n++)
+                    {
+                        max = Math.Max(Math.Abs(buffer[n]), max);
+                    }
+                    var line = new Line();
+
+                    //set xPos in rleation to point in buffer (time)
+                    line.X1 = xPos; 
+                    line.X2 = xPos;
+
+                    //set yPos in relation to volume of buffer (amplitude)
+                    line.Y1 = mid + (max * yScale);
+                    line.Y2 = mid - (max * yScale);
+                    line.StrokeThickness = 0.1;
+                    line.Stroke = Brushes.Black;
+                    canvas.Children.Add(line);
+                    max = 0;
+                    xPos++;
+                }
+                canvas.Width = xPos;
+                canvas.Height = mid * 2;
+            }
+            window.Height = 260;
+            var scrollViewer = new ScrollViewer();
+            scrollViewer.Content = canvas;
+            scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            window.Content = scrollViewer;
+            window.ShowDialog();
         }
     }
 }

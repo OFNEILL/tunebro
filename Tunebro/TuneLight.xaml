@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Tunebro"
         mc:Ignorable="d"
         Title="TuneLight" Height="450" Width="800" 
-        Loaded="Init">
+        Loaded="RunAudio">
     <Window.Resources>
         <Storyboard x:Key="PageFade" Name="PageFade">
             <ColorAnimation 
@@ -14,8 +14,4 @@
                 Duration="0:0:3" />
         </Storyboard>
     </Window.Resources>
-
-    <Grid Background="White" Name="MainGrid">
-        <Button Content="Start Fade" VerticalAlignment="Center" HorizontalAlignment="Center" Click="Button_Click"/>
-    </Grid>
 </Window>
