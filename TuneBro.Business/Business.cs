@@ -1,9 +1,11 @@
 ﻿using NAudio.Wave;
+using ScottPlot;
 
 namespace TuneBro.Business
 {
     public class Business
     {
+        private static string resultPath = @"C:\Users\ASUS-PC\Desktop\Samples\";
         public string Init(string path)
         {
             //copy file to working directory
@@ -34,6 +36,39 @@ namespace TuneBro.Business
             return new AudioFileReader(path);
         }
 
+        private double[] ExtractBuffer(AudioFileReader reader)
+        {
+            float[] buffer = new float[reader.WaveFormat.SampleRate];
+            int samplesRead;
+            List<double> bufferList = new List<double>();
+            while ((samplesRead = reader.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                for (int i = 0; i < samplesRead; i++)
+                {
+                    bufferList.Add(buffer[i]);
+                }
+            }
+
+            double[] bufferOut = bufferList.ToArray();
+
+            //check if buffer is power of 2
+            if (buffer.Length != Math.Pow(2, Math.Ceiling(Math.Log(buffer.Length, 2))))
+            {
+                bufferOut = MakeBufferPO2(bufferOut);
+            }
+
+            return bufferOut;
+        }
+
+        private double[] MakeBufferPO2(double[] buffer)
+        {
+            int length = buffer.Length;
+            int newLength = (int)Math.Pow(2, Math.Ceiling(Math.Log(length, 2)));
+            double[] newBuffer = new double[newLength];
+            Array.Copy(buffer, newBuffer, length);
+            return newBuffer;
+        }
+
         private float ExtractMaxVolume(AudioFileReader reader)
         {
             float[] buffer = new float[reader.WaveFormat.SampleRate];
@@ -52,6 +87,37 @@ namespace TuneBro.Business
             }
 
             return maxVolume;
+        }
+
+        public string GenerateFFTWave(string path)
+        {
+            string pathOut = "";
+
+            AudioFileReader reader = ExtractAudioReader(path);
+            double[] signal = ExtractBuffer(reader);
+
+            // Shape the signal using a Hanning window
+            FftSharp.Windows.Hanning window = new FftSharp.Windows.Hanning();
+            window.ApplyInPlace(signal);
+
+            // Calculate the FFT as an array of complex numbers
+            System.Numerics.Complex[] spectrum = FftSharp.FFT.Forward(signal);
+
+            // or get the magnitude (units sqrd) or power (dB) as double[] 
+            double[] magnitude = FftSharp.FFT.Magnitude(spectrum);
+            double[] power = FftSharp.FFT.Power(spectrum);
+
+            // plot the sample audio
+            Plot plt = new Plot();
+
+            plt.Add.Signal(signal, 48000 / 1000.0);
+            plt.YLabel("Amplitude");
+            plt.XLabel("Time (ms)");
+
+            pathOut = $"{resultPath}{Guid.NewGuid()}.png";
+            plt.Save(pathOut, 1000, 1000);
+
+            return pathOut;
         }
     }
 }
