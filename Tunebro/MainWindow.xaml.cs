@@ -82,43 +82,53 @@ namespace Tunebro
                     xPos++;
                 }
 
-                var fft = FFT(buffer);
-                float[] newBuffer = fft.Select(x => (float)x.Magnitude).ToArray();
+                window.Height = 260;
+                var scrollViewer = new ScrollViewer();
+                scrollViewer.Content = canvas;
+                scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+                window.Content = scrollViewer;
+                window.ShowDialog();
 
-                while ((read = reader.Read(newBuffer, 0, batch)) == batch)
-                {
-                    for (int n = 0; n < read; n++)
-                    {
-                        max = Math.Max(Math.Abs(buffer[n]), max);
-                    }
-                    Line line = new Line();
 
-                    //set xPos in relation to point in buffer (time)
-                    line.X1 = xPos;
-                    line.X2 = xPos;
 
-                    //set yPos in relation to volume of buffer (amplitude)
-                    line.Y1 = mid + (max * yScale);
-                    line.Y2 = mid - (max * yScale);
-                    var y1 = line.Y1;
-                    var y2 = line.Y2;
-                    line.StrokeThickness = 0.1;
-                    line.Stroke = Brushes.Black;
-                    canvas.Children.Add(line);
-                    max = 0;
+                //    var fft = FFT(buffer);
+                //    float[] newBuffer = fft.Select(x => (float)x.Magnitude).ToArray();
 
-                    xPos++;
-                }
-                canvas.Width = xPos;
-                canvas.Height = mid * 2;
+                //    while ((read = reader.Read(newBuffer, 0, batch)) == batch)
+                //    {
+                //        for (int n = 0; n < read; n++)
+                //        {
+                //            max = Math.Max(Math.Abs(buffer[n]), max);
+                //        }
+                //        Line line = new Line();
+
+                //        //set xPos in relation to point in buffer (time)
+                //        line.X1 = xPos;
+                //        line.X2 = xPos;
+
+                //        //set yPos in relation to volume of buffer (amplitude)
+                //        line.Y1 = mid + (max * yScale);
+                //        line.Y2 = mid - (max * yScale);
+                //        var y1 = line.Y1;
+                //        var y2 = line.Y2;
+                //        line.StrokeThickness = 0.1;
+                //        line.Stroke = Brushes.Black;
+                //        canvas.Children.Add(line);
+                //        max = 0;
+
+                //        xPos++;
+                //    }
+                //    canvas.Width = xPos;
+                //    canvas.Height = mid * 2;
+                //}
+
+                //window.Height = 260;
+                //var scrollViewer = new ScrollViewer();
+                //scrollViewer.Content = canvas;
+                //scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+                //window.Content = scrollViewer;
+                //window.ShowDialog();
             }
-
-            window.Height = 260;
-            var scrollViewer = new ScrollViewer();
-            scrollViewer.Content = canvas;
-            scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-            window.Content = scrollViewer;
-            window.ShowDialog();
         }
 
         private void ExtractFFTWave(string path)
