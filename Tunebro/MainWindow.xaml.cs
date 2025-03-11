@@ -1,5 +1,6 @@
 ﻿using FftSharp;
 using Microsoft.Win32;
+using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using ScottPlot;
 using System.Numerics;
@@ -13,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TuneBro;
 using TuneBro.Business;
 using Image = System.Windows.Controls.Image;
 using Line = System.Windows.Shapes.Line;
@@ -29,7 +31,7 @@ namespace Tunebro
             InitializeComponent();
         }
 
-        private void UploadButton_Click(object sender, RoutedEventArgs e)
+        private void CollapsedWaveformButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Audio files (*.mp3;*.wav)|*.mp3;*.wav|All files (*.*)|*.*";
@@ -42,18 +44,34 @@ namespace Tunebro
                 //direct to TuneLight.xml window
                 //ExtractWaveform(business.Init(filePath));
 
-                //open image set in path
-                var window = new System.Windows.Window();
-                var image = new Image();
-                image.Source = new BitmapImage(new Uri(business.GenerateFFTWave(filePath)));
-                window.Content = image;
-                window.ShowDialog();
+                //open window detailing waveform
+                ExtractWaveform(filePath);
             }
         }
 
         private void ExtractWaveform(string path)
         {
             var window = new System.Windows.Window();
+            //add save button in top left of window
+            var saveButton = new Button();
+            saveButton.Content = "Save";
+            saveButton.Click += (sender, e) =>
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "PNG Image|*.png";
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    var canvas = (Canvas)window.Content;
+                    var bitmap = new RenderTargetBitmap((int)canvas.ActualWidth, (int)canvas.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+                    bitmap.Render(canvas);
+                    var encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                    using (var stream = saveFileDialog.OpenFile())
+                    {
+                        encoder.Save(stream);
+                    }
+                }
+            };
             var canvas = new Canvas();
             using (var reader = new AudioFileReader(path))
             {
@@ -102,33 +120,14 @@ namespace Tunebro
             }
         }
 
-        private static Complex[] FFT(float[] buffer)
+        private void LiveStreamButton_Click(object sender, RoutedEventArgs e)
         {
-            int length = buffer.Length;
-            Complex[] fft = new Complex[length];
+            //open LiveStreamViewer window
+            var window = new LiveStreamViewer();
+            window.Show();
 
-            float[] even = new float[length / 2];
-            float[] odd = new float[length / 2];
-
-            for (int i = 0; i < (length / 2); i++)
-            {
-                even[i] = buffer[2 * i];
-                odd[i] = buffer[2 * i + 1];
-            }
-
-            Complex[] complexEven = FFT(even);
-            Complex[] complexOdd = FFT(odd);
-
-            for (int i = 0; i < length / 2; i++)
-            {
-                float angle = -2 * MathF.PI * i / length;
-                Complex complex = Complex.FromPolarCoordinates(1, angle);
-
-                fft[i] = complexEven[i] + complex * complexOdd[i];
-                fft[i + length / 2] = complexEven[i] - complex * complexOdd[i];
-            }
-
-            return fft;
+            //close current window
+            this.Close();
         }
     }
 }
