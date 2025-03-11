@@ -1,4 +1,4 @@
-﻿<Window x:Class="WpfFftMonitor.FftMonitorWindow"
+﻿<Window x:Class="TuneBro.LiveStreamViewer"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
         xmlns:ScottPlot="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF"
         mc:Ignorable="d"
         Title="FFT Monitor" Height="400" Width="600"
-        Loaded="FftMonitorWindow_Load">
+        Loaded="ViewerLoaded">
     <Grid>
         <ComboBox x:Name="DeviceComboBox" SelectionChanged="DeviceComboBox_SelectionChanged" 
                   HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Margin="10"/>

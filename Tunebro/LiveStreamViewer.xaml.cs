@@ -5,9 +5,9 @@ using System.Windows.Threading;
 using NAudio.Wave;
 using FftSharp;
 
-namespace WpfFftMonitor
+namespace TuneBro
 {
-    public partial class FftMonitorWindow : System.Windows.Window
+    public partial class LiveStreamViewer : System.Windows.Window
     {
         private WaveInEvent? Wave;
         private readonly double[] AudioValues;
@@ -18,7 +18,7 @@ namespace WpfFftMonitor
         private readonly int BufferMilliseconds = 20;
         private readonly DispatcherTimer timer;
 
-        public FftMonitorWindow()
+        public LiveStreamViewer()
         {
             InitializeComponent();
 
@@ -42,7 +42,7 @@ namespace WpfFftMonitor
             timer.Start();
         }
 
-        private void FftMonitorWindow_Load(object sender, RoutedEventArgs e)
+        private void ViewerLoaded(object sender, RoutedEventArgs e)
         {
             for (int i = 0; i < WaveIn.DeviceCount; i++)
             {

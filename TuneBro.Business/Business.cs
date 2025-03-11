@@ -8,16 +8,14 @@ namespace TuneBro.Business
     public class Business
     {
         private static string resultPath = @"C:\Users\ASUS-PC\Desktop\Samples\";
-        public string Init(string path)
+        public string GenerateWaveform(string path)
         {
             //copy file to working directory
             string workingPath = HandleFileCopy(path);
 
             //extract audio reader from file
             AudioFileReader reader = ExtractAudioReader(workingPath);
-            float maxVolume = ExtractMaxVolume(reader);
-
-            Console.WriteLine(maxVolume.ToString());
+            //float maxVolume = ExtractMaxVolume(reader);
 
             return workingPath;
         }
