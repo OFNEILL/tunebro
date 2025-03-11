@@ -1,112 +1,117 @@
-﻿using NAudio.Wave;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using TuneBro.Business;
+using System.Windows.Threading;
+using NAudio.Wave;
+using FftSharp;
 
-namespace Tunebro
+namespace WpfFftMonitor
 {
-    /// <summary>
-    /// Interaction logic for TuneLight.xaml
-    /// </summary>
-    public partial class TuneLight : Window
+    public partial class FftMonitorWindow : System.Windows.Window
     {
-        public static string workingPath = "";
+        private WaveInEvent? Wave;
+        private readonly double[] AudioValues;
+        private readonly double[] FftValues;
+        private readonly int SampleRate = 44100;
+        private readonly int BitDepth = 16;
+        private readonly int ChannelCount = 1;
+        private readonly int BufferMilliseconds = 20;
+        private readonly DispatcherTimer timer;
 
-        private static Window window;
-        public TuneLight(string path)
+        public FftMonitorWindow()
         {
-            workingPath = path;
             InitializeComponent();
+
+            AudioValues = new double[SampleRate * BufferMilliseconds / 1000];
+            double[] paddedAudio = Pad.ZeroPad(AudioValues);
+
+            System.Numerics.Complex[] fftComplex = FftSharp.FFT.Forward(paddedAudio);
+            double[] fftMag = FftSharp.FFT.Magnitude(fftComplex);
+
+            FftValues = new double[fftMag.Length];
+
+            double fftPeriod = FftSharp.FFT.FrequencyResolution(SampleRate, fftMag.Length);
+
+            wpfPlot.Plot.Add.Signal(FftValues, 1.0 / fftPeriod);
+            wpfPlot.Plot.YLabel("Spectral Power");
+            wpfPlot.Plot.XLabel("Frequency (kHz)");
+            wpfPlot.Refresh();
+
+            timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
+            timer.Tick += Timer_Tick;
+            timer.Start();
         }
 
-        private void Init(object sender, RoutedEventArgs e)
+        private void FftMonitorWindow_Load(object sender, RoutedEventArgs e)
         {
-            StartColorFade(Colors.Red, Colors.Pink);
-            window = Window.GetWindow(this);
-        }
-
-        // Triggered when the button is clicked
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            StartColorFade(Colors.Green, Colors.Blue); // Trigger on button click with a color
-        }
-
-        // Helper method to start the color fade animation
-        private void StartColorFade(Color fromColor, Color toColor)
-        {
-            // Get the storyboard resource
-            Storyboard colorFadeStoryboard = (Storyboard)Resources["PageFade"];
-
-            // Set the From and To values of the ColorAnimation dynamically
-            this.Background = new SolidColorBrush(fromColor);
-            ColorAnimation colourAnimation = (ColorAnimation)colorFadeStoryboard.Children[0];
-            colourAnimation.From = fromColor;
-            colourAnimation.To = toColor;
-
-            // Begin the animation of the ColorAnimation within the storyboard
-            //colorFadeStoryboard.Begin(window.Resources);
-            //this.Background = new SolidColorBrush(toColor);
-        }
-
-        private void RunAudio(object sender, RoutedEventArgs e)
-        {
-            var window = new Window();
-            var canvas = new Canvas();
-            using (var reader = new AudioFileReader(workingPath))
+            for (int i = 0; i < WaveIn.DeviceCount; i++)
             {
-                float f = 0.0f;
-                float max = 0.0f;
-                int mid = 100;
-                int yScale = 100;
-                int xPos = 0;
-                int read = 0;
-
-                long samples = reader.Length / (reader.WaveFormat.Channels * reader.WaveFormat.BitsPerSample / 8);
-                int batch = (int)Math.Max(40, samples / 4000); // waveform <= 4000 pixels in width
-                float[] buffer = new float[batch];
-
-                while ((read = reader.Read(buffer, 0, batch)) == batch)
-                {
-                    for (int n = 0; n < read; n++)
-                    {
-                        max = Math.Max(Math.Abs(buffer[n]), max);
-                    }
-                    var line = new Line();
-
-                    //set xPos in rleation to point in buffer (time)
-                    line.X1 = xPos; 
-                    line.X2 = xPos;
-
-                    //set yPos in relation to volume of buffer (amplitude)
-                    line.Y1 = mid + (max * yScale);
-                    line.Y2 = mid - (max * yScale);
-                    line.StrokeThickness = 0.1;
-                    line.Stroke = Brushes.Black;
-                    canvas.Children.Add(line);
-                    max = 0;
-                    xPos++;
-                }
-                canvas.Width = xPos;
-                canvas.Height = mid * 2;
+                var caps = WaveIn.GetCapabilities(i);
+                DeviceComboBox.Items.Add(caps.ProductName);
             }
-            window.Height = 260;
-            var scrollViewer = new ScrollViewer();
-            scrollViewer.Content = canvas;
-            scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-            window.Content = scrollViewer;
-            window.ShowDialog();
+        }
+
+        private void DeviceComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (Wave is not null)
+            {
+                Wave.StopRecording();
+                Wave.Dispose();
+
+                for (int i = 0; i < AudioValues.Length; i++)
+                    AudioValues[i] = 0;
+                wpfPlot.Plot.Axes.AutoScale();
+            }
+
+            if (DeviceComboBox.SelectedIndex == -1)
+                return;
+
+            Wave = new WaveInEvent()
+            {
+                DeviceNumber = DeviceComboBox.SelectedIndex,
+                WaveFormat = new WaveFormat(SampleRate, BitDepth, ChannelCount),
+                BufferMilliseconds = BufferMilliseconds
+            };
+
+            Wave.DataAvailable += WaveIn_DataAvailable;
+            Wave.StartRecording();
+
+            wpfPlot.Plot.Title(DeviceComboBox.SelectedItem.ToString());
+        }
+
+        private void WaveIn_DataAvailable(object? sender, WaveInEventArgs e)
+        {
+            for (int i = 0; i < e.Buffer.Length / 2; i++)
+                AudioValues[i] = BitConverter.ToInt16(e.Buffer, i * 2);
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            double[] paddedAudio = Pad.ZeroPad(AudioValues);
+            System.Numerics.Complex[] fftComplex = FftSharp.FFT.Forward(paddedAudio);
+            double[] fftMag = FftSharp.FFT.Power(fftComplex);
+
+            Array.Copy(fftMag, FftValues, fftMag.Length);
+
+            // Find frequency peak
+            int peakIndex = fftMag.ToList().IndexOf(fftMag.Max());
+            double fftPeriod = FFT.FrequencyResolution(SampleRate, fftMag.Length);
+            double peakFrequency = fftPeriod * peakIndex;
+            PeakFrequencyLabel.Text = $"Peak Frequency: {peakFrequency:N0} Hz";
+
+            // Auto-scale the plot Y axis limits
+            double fftPeakMag = fftMag.Max();
+
+            var limits = wpfPlot.Plot.Axes.GetLimits();
+            double plotYMax = limits.Top;
+
+            wpfPlot.Plot.Axes.AutoScaleX();
+            wpfPlot.Plot.Axes.AutoScaleExpandY();
+            wpfPlot.Plot.GetImage(500, 500);
+
+
+            // Refresh plot
+            wpfPlot.Refresh();
         }
     }
 }

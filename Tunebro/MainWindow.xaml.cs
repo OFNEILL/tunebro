@@ -1,5 +1,6 @@
 ﻿using FftSharp;
 using Microsoft.Win32;
+using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using ScottPlot;
 using System.Numerics;
@@ -45,7 +46,7 @@ namespace Tunebro
                 //open image set in path
                 var window = new System.Windows.Window();
                 var image = new Image();
-                image.Source = new BitmapImage(new Uri(business.GenerateFFTWave(filePath)));
+                image.Source = new BitmapImage(new Uri(business.GenerateFFTFilterGraph(filePath)));
                 window.Content = image;
                 window.ShowDialog();
             }
