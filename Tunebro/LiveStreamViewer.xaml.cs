@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Threading;
 using NAudio.Wave;
 using FftSharp;
+using System.Drawing;
+using System.Windows.Media;
 
 namespace TuneBro
 {
@@ -17,6 +19,7 @@ namespace TuneBro
         private readonly int ChannelCount = 1;
         private readonly int BufferMilliseconds = 20;
         private readonly DispatcherTimer timer;
+        private long colourNum = 0;
 
         public LiveStreamViewer()
         {
@@ -26,6 +29,7 @@ namespace TuneBro
             double[] paddedAudio = Pad.ZeroPad(AudioValues);
 
             System.Numerics.Complex[] fftComplex = FftSharp.FFT.Forward(paddedAudio);
+
             double[] fftMag = FftSharp.FFT.Magnitude(fftComplex);
 
             FftValues = new double[fftMag.Length];
@@ -82,7 +86,9 @@ namespace TuneBro
         private void WaveIn_DataAvailable(object? sender, WaveInEventArgs e)
         {
             for (int i = 0; i < e.Buffer.Length / 2; i++)
+            {
                 AudioValues[i] = BitConverter.ToInt16(e.Buffer, i * 2);
+            }
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -98,6 +104,34 @@ namespace TuneBro
             double fftPeriod = FFT.FrequencyResolution(SampleRate, fftMag.Length);
             double peakFrequency = fftPeriod * peakIndex;
             PeakFrequencyLabel.Text = $"Peak Frequency: {peakFrequency:N0} Hz";
+
+            // Update value of colourNum
+            //colourNum = Int64.Parse(((Math.Floor(peakIndex * peakFrequency * SampleRateToString());
+
+            colourNum = (long)Math.Floor((peakIndex * peakFrequency * SampleRate));
+            ColourLabel.Text = $"Colour: {colourNum}";
+
+            //convert number to hex
+            string hexValue = colourNum.ToString("X");
+
+            ColourLabel.Text = $"Colour: {hexValue}";
+
+            //get colour from hex
+            System.Drawing.Color colour = System.Drawing.ColorTranslator.FromHtml("#" + hexValue);
+            ColourSquare.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromArgb(colour.A, colour.R, colour.G, colour.B));
+            ColourSquare.Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb(colour.A, colour.R, colour.G, colour.B));
+
+            //change background of window to colour, if it is not black
+            if (colour.R != 0 && colour.G != 0 && colour.B != 0)
+            {
+                this.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(colour.A, colour.R, colour.G, colour.B));
+
+                //change graph colour
+                ScottPlot.PlotStyle style = new ScottPlot.PlotStyle();
+                style.FigureBackgroundColor = new ScottPlot.Color(hexValue);
+                style.DataBackgroundColor = new ScottPlot.Color(hexValue);
+                wpfPlot.Plot.SetStyle(style);
+            }
 
             // Auto-scale the plot Y axis limits
             double fftPeakMag = fftMag.Max();

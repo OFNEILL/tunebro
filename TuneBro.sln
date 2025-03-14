@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tunebro", "Tunebro\Tunebro.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TuneBro.Business", "TuneBro.Business\TuneBro.Business.csproj", "{B6D3C388-1A51-475B-8321-8F4CA61D1E0F}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "TuneBro.Setup", "TuneBro.Setup\TuneBro.Setup.vdproj", "{9AD8B4B4-4AC8-CB7D-9866-67AEE887EE5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,8 @@ Global
 		{B6D3C388-1A51-475B-8321-8F4CA61D1E0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6D3C388-1A51-475B-8321-8F4CA61D1E0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6D3C388-1A51-475B-8321-8F4CA61D1E0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AD8B4B4-4AC8-CB7D-9866-67AEE887EE5A}.Debug|Any CPU.ActiveCfg = Debug
+		{9AD8B4B4-4AC8-CB7D-9866-67AEE887EE5A}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,7 +6,13 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>tunebro.ico</ApplicationIcon>
+    <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="tunebro.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FftSharp" Version="2.2.0" />
