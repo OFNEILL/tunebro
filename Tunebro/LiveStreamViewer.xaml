@@ -8,6 +8,10 @@
         Title="FFT Monitor" Height="400" Width="600"
         Loaded="ViewerLoaded">
     <Grid>
+        <Rectangle Name="ColourSquare" HorizontalAlignment="Right" VerticalAlignment="Top"
+                   Width="20" Height="20" Margin="30"/>
+        <TextBlock Name="ColourLabel" HorizontalAlignment="Right" VerticalAlignment="Top"
+                   Margin="10" />
         <ComboBox x:Name="DeviceComboBox" SelectionChanged="DeviceComboBox_SelectionChanged" 
                   HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Margin="10"/>
         <ScottPlot:WpfPlot x:Name="wpfPlot" Margin="10,40,10,40"/>
