@@ -8,12 +8,11 @@
         Title="FFT Monitor" Height="400" Width="600"
         Loaded="ViewerLoaded">
     <Grid>
-        <Rectangle Name="ColourSquare" HorizontalAlignment="Right" VerticalAlignment="Top"
-                   Width="20" Height="20" Margin="30"/>
-        <TextBlock Name="ColourLabel" HorizontalAlignment="Right" VerticalAlignment="Top"
-                   Margin="10" />
         <ComboBox x:Name="DeviceComboBox" SelectionChanged="DeviceComboBox_SelectionChanged" 
                   HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Margin="10"/>
+        <Button Content="⚙" HorizontalAlignment="Right" VerticalAlignment="Top" 
+        Width="30" Height="30" Margin="5" Background="Transparent" BorderBrush="Transparent"
+        Click="SettingsButton_Click"/>
         <ScottPlot:WpfPlot x:Name="wpfPlot" Margin="10,40,10,40"/>
         <TextBlock x:Name="PeakFrequencyLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" 
                    FontSize="14" FontWeight="Bold" Margin="10"/>

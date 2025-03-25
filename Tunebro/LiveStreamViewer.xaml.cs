@@ -23,10 +23,13 @@ namespace TuneBro
         private readonly DispatcherTimer timer;
         private long colourNum = 0;
         private long prevColourNum = 0;
+        private long MagnitudeDiff = 2500;
 
-        public LiveStreamViewer()
+        public LiveStreamViewer(long magDiff)
         {
             InitializeComponent();
+
+            MagnitudeDiff = magDiff;
 
             AudioValues = new double[SampleRate * BufferMilliseconds / 1000];
             double[] paddedAudio = Pad.ZeroPad(AudioValues);
@@ -110,21 +113,17 @@ namespace TuneBro
             //ensure positive
             if (colourNum < 0) colourNum *= -1;
 
-            colourNum = colourNum * 50;
+            colourNum = colourNum *= (MagnitudeDiff / 50);
 
             if (colourNum > 0)
             {
-                if((colourNum - prevColourNum) > 2500 || (prevColourNum - colourNum) > 2500)
+                if(colourNum > MagnitudeDiff)
                 {
                     //convert number to hex
                     string hexValue = colourNum.ToString("X");
 
-                    ColourLabel.Text = $"Colour: {hexValue}";
-
                     //get colour from hex
                     System.Drawing.Color colour = System.Drawing.ColorTranslator.FromHtml("#" + hexValue);
-                    ColourSquare.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromArgb(colour.A, colour.R, colour.G, colour.B));
-                    ColourSquare.Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb(colour.A, colour.R, colour.G, colour.B));
 
                     //update background colour
                     if (colour.R != 0 && colour.G != 0 && colour.B != 0)
@@ -135,17 +134,17 @@ namespace TuneBro
                         //graph colour
                         ScottPlot.PlotStyle style = new ScottPlot.PlotStyle();
                         style.FigureBackgroundColor = new ScottPlot.Color(hexValue);
-                        style.DataBackgroundColor = new ScottPlot.Color(hexValue);
+                        style.DataBackgroundColor = new ScottPlot.Color(hexValue); //2200
+                        
                         wpfPlot.Plot.SetStyle(style);
                     }
                 }
-                ColourLabel.Text = $"Colour: {colourNum}";
             }
 
             Array.Copy(fftMag, FftValues, fftMag.Length);
 
-            //get volume in DB
-            double volume = 20 * Math.Log10(fftMag.Max());
+            ////get volume in DB
+            //double volume = 20 * Math.Log10(fftMag.Max());
 
             // Find frequency peak
             int peakIndex = fftMag.ToList().IndexOf(fftMag.Max());
@@ -168,6 +167,22 @@ namespace TuneBro
 
             // Refresh plot
             wpfPlot.Refresh();
+        }
+
+        // Event handler for the settings cog button
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Instantiate the settings modal
+            SettingsWindow settingsWindow = new SettingsWindow(MagnitudeDiff);
+            settingsWindow.ShowDialog();
+
+            // Optional: Pass the current MagnitudeDiff value to the modal (if needed)
+            settingsWindow.MagnitudeDiffTextBox.Text = MagnitudeDiff.ToString();
+
+            TuneBro.Business.Business business = new TuneBro.Business.Business();
+            var settings = business.GetSettings();
+
+            MagnitudeDiff = settings.MagnitudeDiff;
         }
     }
 }

@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TuneBro;
 using TuneBro.Business;
+using TuneBro.Business.Objects;
 using Image = System.Windows.Controls.Image;
 using Line = System.Windows.Shapes.Line;
 
@@ -122,8 +123,13 @@ namespace Tunebro
 
         private void LiveStreamButton_Click(object sender, RoutedEventArgs e)
         {
+            //get settings
+            Business business = new Business();
+            Settings settings = business.GetSettings();
+
+
             //open LiveStreamViewer window
-            var window = new LiveStreamViewer();
+            var window = new LiveStreamViewer(settings.MagnitudeDiff);
             window.Show();
 
             //close current window

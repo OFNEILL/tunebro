@@ -1,23 +1,27 @@
 ﻿using FftSharp;
 using NAudio.Wave;
+using Newtonsoft.Json;
 using ScottPlot;
 using System.Numerics;
+using TuneBro.Business.Objects;
 
 namespace TuneBro.Business
 {
     public class Business
     {
-        private static string resultPath = @"C:\Users\ASUS-PC\Desktop\Samples\";
-        public string GenerateWaveform(string path)
+        private static string resultPath = Directory.GetCurrentDirectory() + "/Samples";
+        private static string configPath = Directory.GetCurrentDirectory() + "/tunebro-config";
+
+        public Business()
         {
-            //copy file to working directory
-            string workingPath = HandleFileCopy(path);
-
-            //extract audio reader from file
-            AudioFileReader reader = ExtractAudioReader(workingPath);
-            //float maxVolume = ExtractMaxVolume(reader);
-
-            return workingPath;
+            if (!Directory.Exists(resultPath))
+            {
+                Directory.CreateDirectory(resultPath);
+            }
+            if (!Directory.Exists(configPath))
+            {
+                Directory.CreateDirectory(configPath);
+            }
         }
 
         private string HandleFileCopy(string path)
@@ -69,95 +73,41 @@ namespace TuneBro.Business
             return newBuffer;
         }
 
-        private float ExtractMaxVolume(AudioFileReader reader)
+        public Settings GetSettings()
         {
-            float[] buffer = new float[reader.WaveFormat.SampleRate];
-            int samplesRead;
-            float maxVolume = 0;
-
-            while ((samplesRead = reader.Read(buffer, 0, buffer.Length)) > 0)
+            //check if settings file exists, if not create it
+            if (!File.Exists(configPath + "/settings.json"))
             {
-                for (int i = 0; i < samplesRead; i++)
-                {
-                    if (buffer[i] > maxVolume)
-                    {
-                        maxVolume = buffer[i];
-                    }
-                }
+                File.Create(configPath + "/settings.json");
+
+                //write default settings to file
+                File.WriteAllText(configPath + "/settings.json", JsonConvert.SerializeObject(new Settings { MagnitudeDiff = 2500 }));
             }
 
-            return maxVolume;
+            //read settings from file
+            string json = File.ReadAllText(configPath + "/settings.json");
+
+            //convert json to settings object
+            Settings settings = JsonConvert.DeserializeObject<Settings>(json);
+
+            return settings;
         }
 
-        public string GenerateFFTWave(string path)
+        public void UpdateSettings(Settings settings)
         {
-            string pathOut = "";
+            //check if settings file exists, if not create it
+            if (!File.Exists(configPath + "/settings.json"))
+            {
+                File.Create(configPath + "/settings.json");
+            }
 
-            AudioFileReader reader = ExtractAudioReader(path);
-            double[] signal = ExtractBuffer(reader);
+            //convert settings to a json string
+            string json = JsonConvert.SerializeObject(settings);
 
-            // Shape the signal using a Hanning window
-            FftSharp.Windows.Hanning window = new FftSharp.Windows.Hanning();
-            window.ApplyInPlace(signal);
+            //update settings
+            File.WriteAllText(configPath + "/settings.json", json);
 
-            // Calculate the FFT as an array of complex numbers
-            System.Numerics.Complex[] spectrum = FftSharp.FFT.Forward(signal);
-
-            // or get the magnitude (units sqrd) or power (dB) as double[] 
-            double[] frequency = FftSharp.FFT.Magnitude(spectrum);
-            double[] power = FftSharp.FFT.Power(spectrum);
-
-            // plot the sample audio
-            Plot plt = new Plot();
-
-            plt.Add.Signal(signal, reader.WaveFormat.SampleRate / 1000.0);
-            plt.YLabel("Amplitude");
-            plt.XLabel("Time (ms)");
-
-            pathOut = $"{resultPath}{Guid.NewGuid()}.png";
-            plt.Save(pathOut, 1000, 1000);
-
-            return pathOut;
-        }
-
-        public string GenerateFFTFilterGraph(string path)
-        {
-            string pathOut = "";
-
-            AudioFileReader reader = ExtractAudioReader(path);
-            double[] signal = ExtractBuffer(reader);
-            double[] lowSignal = FftSharp.Filter.LowPass(signal, reader.WaveFormat.SampleRate, 2000);
-
-            // Shape the signal using a Hanning window
-            FftSharp.Windows.Hanning window = new FftSharp.Windows.Hanning();
-            window.ApplyInPlace(signal);
-            window.ApplyInPlace(lowSignal);
-
-            // Calculate the FFT as an array of complex numbers
-            System.Numerics.Complex[] spectrum = FftSharp.FFT.Forward(signal);
-            Complex[] lowSpectrum = FftSharp.FFT.Forward(lowSignal);
-
-            // or get the magnitude (units sqrd) or power (dB) as double[] 
-            double[] power = FftSharp.FFT.Power(spectrum);
-            double[] lowPower = FftSharp.FFT.Power(lowSpectrum);
-
-            double[] frequency = FftSharp.FFT.FrequencyScale(power.Length, reader.WaveFormat.SampleRate);
-            double[] lowFrequency = FftSharp.FFT.FrequencyScale(lowPower.Length, reader.WaveFormat.SampleRate);
-
-
-            // plot the sample audio
-            Plot plt = new Plot();
-
-            plt.Add.ScatterLine(frequency, power);
-            //plt.Add.ScatterLine(lowFrequency, lowPower);
-            //plt.Add.ScatterLine();
-            plt.YLabel("Power (dB)");
-            plt.XLabel("Frequency (Hz)");
-
-            pathOut = $"{resultPath}{Guid.NewGuid()}.png";
-            plt.Save(pathOut, 500, 200);
-
-            return pathOut;
+            return;
         }
     }
 }
