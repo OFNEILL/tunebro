@@ -78,10 +78,14 @@ namespace TuneBro.Business
             //check if settings file exists, if not create it
             if (!File.Exists(configPath + "/settings.json"))
             {
-                File.Create(configPath + "/settings.json");
+                File.Create(configPath + "/settings.json").Close();
+
+                var writtenSettings = new Settings { MagnitudeDiff = 2500 };
 
                 //write default settings to file
-                File.WriteAllText(configPath + "/settings.json", JsonConvert.SerializeObject(new Settings { MagnitudeDiff = 2500 }));
+                File.WriteAllText(configPath + "/settings.json", JsonConvert.SerializeObject(writtenSettings));
+
+                return writtenSettings;
             }
 
             //read settings from file
