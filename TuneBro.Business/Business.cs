@@ -9,8 +9,9 @@ namespace TuneBro.Business
 {
     public class Business
     {
-        private static string resultPath = Directory.GetCurrentDirectory() + "/Samples";
-        private static string configPath = Directory.GetCurrentDirectory() + "/tunebro-config";
+        private static string bassPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Tunebro";
+        private static string resultPath = bassPath + @"\Samples";
+        private static string configPath = bassPath + @"\tunebro-config";
 
         public Business()
         {

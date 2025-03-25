@@ -199,7 +199,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Tunebro"
         "ProductCode" = "8:{63271788-7E70-4F43-8DA7-F177B2B6B7CC}"
-        "PackageCode" = "8:{4E9989E3-4851-4B93-9F78-FDCE204E09B7}"
+        "PackageCode" = "8:{9A5C61C4-5D6B-45B3-86A9-44BB6BC85B62}"
         "UpgradeCode" = "8:{77CC7E81-8BE8-4271-B146-3D7F6A02A46B}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
@@ -748,7 +748,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F2BC5BB729F1463B80B5EB3E704E5164"
             {
-            "SourcePath" = "8:..\\Tunebro\\obj\\Release\\net8.0-windows\\apphost.exe"
+            "SourcePath" = "8:..\\Tunebro\\obj\\Debug\\net8.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E66971C30A8B49D69ADBD092C7B44DB2"
