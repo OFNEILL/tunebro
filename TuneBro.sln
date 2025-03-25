@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tunebro", "Tunebro\Tunebro.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TuneBro.Business", "TuneBro.Business\TuneBro.Business.csproj", "{B6D3C388-1A51-475B-8321-8F4CA61D1E0F}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "TuneBro.Setup", "TuneBro.Setup\TuneBro.Setup.vdproj", "{9AD8B4B4-4AC8-CB7D-9866-67AEE887EE5A}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Tunebro.Setup", "Tunebro.Setup\Tunebro.Setup.vdproj", "{9AD8B4B4-4AC8-CB7D-9866-67AEE887EE5A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

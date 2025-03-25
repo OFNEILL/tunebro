@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="FftSharp" Version="2.2.0" />
     <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="ScottPlot" Version="5.0.54" />
   </ItemGroup>
 
