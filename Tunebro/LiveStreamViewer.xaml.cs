@@ -113,11 +113,11 @@ namespace TuneBro
             //ensure positive
             if (colourNum < 0) colourNum *= -1;
 
-            colourNum = colourNum *= (MagnitudeDiff / 50);
+            colourNum = colourNum *= (MagnitudeDiff / 2);
 
             if (colourNum > 0)
             {
-                if(colourNum > MagnitudeDiff)
+                if(colourNum > 0)
                 {
                     //convert number to hex
                     string hexValue = colourNum.ToString("X");
@@ -184,5 +184,7 @@ namespace TuneBro
 
             MagnitudeDiff = settings.MagnitudeDiff;
         }
+
+        
     }
 }
